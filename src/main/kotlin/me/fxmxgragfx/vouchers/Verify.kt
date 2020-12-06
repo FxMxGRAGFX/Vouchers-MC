@@ -1,99 +1,120 @@
-package me.fxmxgragfx.vouchers;
+package me.fxmxgragfx.vouchers
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import me.fxmxgragfx.vouchers.CC.translate
+import me.fxmxgragfx.vouchers.CC.translateS
+import me.fxmxgragfx.vouchers.Main.Companion.instance
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Verify {
-
-    private static List<Player> players;
-    private static List<Player> trueInventory;
-    private static Inventory inventory;
-
-    public static void setup() {
-        players = new ArrayList<Player>();
-        trueInventory = new ArrayList<Player>();
+object Verify {
+    @JvmStatic
+    var players: MutableList<Player>? = null
+        private set
+    private var trueInventory: List<Player>? = null
+    fun setup() {
+        players = ArrayList()
+        trueInventory = ArrayList()
     }
 
-    public static void setupInventory(String name) {
-        inventory = Bukkit.createInventory(null, 27, CC.translateS(Main.getInstance().getConfig().getString("VOUCHERS." + name + ".CONFIRMATION_GUI_NAME")));
-        for (int i = 0; i < 9; ++i) {
-            inventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE));
+    @JvmStatic
+    fun setupInventory(name: String): Inventory {
+        val inventory = Bukkit.createInventory(null, 27, translateS(instance!!.config.getString("VOUCHERS.$name.CONFIRMATION_GUI_NAME")))
+        for (i in 0..8) {
+            inventory.setItem(i, ItemStack(Material.STAINED_GLASS_PANE))
         }
-
-        for (int i = 9; i < 12; ++i ) {
-            inventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE));
+        for (i in 9..11) {
+            inventory.setItem(i, ItemStack(Material.STAINED_GLASS_PANE))
         }
-
-        ItemStack yes = new ItemStack(Material.EMERALD_BLOCK);
-        ItemMeta yesMeta = yes.getItemMeta();
-        yesMeta.setDisplayName(CC.translateS("&aYES"));
-        List<String> lore = new ArrayList<String>();
-        lore.add("&7- Click to accept");
-        yesMeta.setLore(CC.translate(lore));
-        yes.setItemMeta(yesMeta);
-        inventory.setItem(12, yes);
-
-        inventory.setItem(13, new ItemStack(Material.STAINED_GLASS_PANE));
-
-        ItemStack no = new ItemStack(Material.REDSTONE_BLOCK);
-        ItemMeta noMeta = no.getItemMeta();
-        noMeta.setDisplayName(CC.translateS("&cNO"));
-        List<String> loreNo = new ArrayList<String>();
-        loreNo.add("&7- Click to accept");
-        noMeta.setLore(CC.translate(loreNo));
-        no.setItemMeta(noMeta);
-        inventory.setItem(14, no);
-
-        for (int i = 14; i < 18; ++i) {
-            inventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE));
+        val yes = ItemStack(Material.EMERALD_BLOCK)
+        val yesMeta = yes.itemMeta
+        yesMeta.displayName = translateS("&aYES")
+        val lore: MutableList<String?> = ArrayList()
+        lore.add("&7- &aClick to accept")
+        yesMeta.lore = translate(lore)
+        yes.itemMeta = yesMeta
+        inventory.setItem(12, yes)
+        inventory.setItem(13, ItemStack(Material.STAINED_GLASS_PANE))
+        val no = ItemStack(Material.REDSTONE_BLOCK)
+        val noMeta = no.itemMeta
+        noMeta.displayName = translateS("&cNO")
+        val loreNo: MutableList<String?> = ArrayList()
+        loreNo.add("&7- &cClick to decline")
+        noMeta.lore = translate(loreNo)
+        no.itemMeta = noMeta
+        inventory.setItem(14, no)
+        for (i in 15..17) {
+            inventory.setItem(i, ItemStack(Material.STAINED_GLASS_PANE))
         }
-
-        for (int i = 18; i < 27; ++i) {
-            inventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE));
+        for (i in 18..26) {
+            inventory.setItem(i, ItemStack(Material.STAINED_GLASS_PANE))
         }
-
+        return inventory
     }
 
-    public static List<Player> getPlayers() {
-        return players;
-    }
-
-    public static Inventory getInventory() {
-        return inventory;
-    }
-
-    public static boolean haveVoucher(Player player) {
-        ItemStack itemInHand = player.getItemInHand();
-        for(String s : Main.getInstance().getConfig().getConfigurationSection("VOUCHERS").getKeys(false)) {
-            ItemStack paperStack = new ItemStack(Material.PAPER);
-            ItemMeta paperMeta = paperStack.getItemMeta();
-            paperMeta.setDisplayName(CC.translateS(Main.getInstance().getConfig().getString("VOUCHERS." + s + ".ITEM.NAME")));
-            paperMeta.setLore(CC.translate(Main.getInstance().getConfig().getStringList("VOUCHERS." + s + ".ITEM.LORE")));
-            paperStack.setItemMeta(paperMeta);
-            ItemStack bookStack = new ItemStack(Material.BOOK);
-            ItemMeta bookMeta = bookStack.getItemMeta();
-            bookMeta.setDisplayName(CC.translateS(Main.getInstance().getConfig().getString("VOUCHERS." + s + ".ITEM.NAME")));
-            bookMeta.setLore(CC.translate(Main.getInstance().getConfig().getStringList("VOUCHERS." + s + ".ITEM.LORE")));
-            bookStack.setItemMeta(bookMeta);
-            if(Main.getInstance().getConfig().getBoolean("VOUCHERS." + s + ".´PAPER") || Main.getInstance().getConfig().getBoolean("VOUCHERS." + s + ".´BOOK")) {
-                if(itemInHand.isSimilar(paperStack) || itemInHand.isSimilar(bookStack)) {
-                    if(Main.getInstance().getConfig().getBoolean("VOUCHERS." + s + ".NEED_CONFIRMATION")) {
-                        setupInventory(s);
-                        player.openInventory(getInventory());
+    @JvmStatic
+    fun haveVoucher(player: Player): Boolean {
+        val itemInHand = player.itemInHand
+        for (s in instance!!.config.getConfigurationSection("VOUCHERS").getKeys(false)) {
+            val paperStack = ItemStack(Material.PAPER)
+            val paperMeta = paperStack.itemMeta
+            paperMeta.displayName = translateS(instance!!.config.getString("VOUCHERS.$s.ITEM.NAME"))
+            paperMeta.lore = translate(instance!!.config.getStringList("VOUCHERS.$s.ITEM.LORE"))
+            paperStack.itemMeta = paperMeta
+            val bookStack = ItemStack(Material.BOOK)
+            val bookMeta = bookStack.itemMeta
+            bookMeta.displayName = translateS(instance!!.config.getString("VOUCHERS.$s.ITEM.NAME"))
+            bookMeta.lore = translate(instance!!.config.getStringList("VOUCHERS.$s.ITEM.LORE"))
+            bookStack.itemMeta = bookMeta
+            if (instance!!.config.getBoolean("VOUCHERS.$s.PAPER") || instance!!.config.getBoolean("VOUCHERS.$s.BOOK")) {
+                if (itemInHand.isSimilar(paperStack) || itemInHand.isSimilar(bookStack)) {
+                    return if (player.hasPermission(instance!!.config.getString("VOUCHERS.$s.PERMISSION_TO_USE"))) {
+                        if (instance!!.config.getBoolean("VOUCHERS.$s.NEED_CONFIRMATION")) {
+                            if (!players!!.contains(player)) {
+                                players!!.add(player)
+                                player.openInventory(setupInventory(s))
+                            } else {
+                                throw Error("ERROR, BAD CAUSE!, Please report to: FxMxGRAGFX#0001 (Discord)")
+                            }
+                        }
+                        true
+                    } else {
+                        player.sendMessage(translateS("&cYou no have permissions to redeem this voucher!"))
+                        false
                     }
-                    return true;
                 }
             } else {
-                throw new Error("ERROR, BAD CONFIG.YML: <" + s + ">");
+                throw Error("ERROR, BAD CONFIG.YML: <$s>, Please report to: FxMxGRAGFX#0001 (Discord)")
             }
         }
-        return false;
+        return false
+    }
+
+    @JvmStatic
+    fun getVoucher(player: Player): String {
+        val itemInHand = player.itemInHand
+        for (s in instance!!.config.getConfigurationSection("VOUCHERS").getKeys(false)) {
+            val paperStack = ItemStack(Material.PAPER)
+            val paperMeta = paperStack.itemMeta
+            paperMeta.displayName = translateS(instance!!.config.getString("VOUCHERS.$s.ITEM.NAME"))
+            paperMeta.lore = translate(instance!!.config.getStringList("VOUCHERS.$s.ITEM.LORE"))
+            paperStack.itemMeta = paperMeta
+            val bookStack = ItemStack(Material.BOOK)
+            val bookMeta = bookStack.itemMeta
+            bookMeta.displayName = translateS(instance!!.config.getString("VOUCHERS.$s.ITEM.NAME"))
+            bookMeta.lore = translate(instance!!.config.getStringList("VOUCHERS.$s.ITEM.LORE"))
+            bookStack.itemMeta = bookMeta
+            if (instance!!.config.getBoolean("VOUCHERS.$s.PAPER") || instance!!.config.getBoolean("VOUCHERS.$s.BOOK")) {
+                if (itemInHand.isSimilar(paperStack) || itemInHand.isSimilar(bookStack)) {
+                    return s
+                }
+            } else {
+                throw Error("ERROR, BAD CONFIG.YML: <$s>")
+            }
+        }
+        return ""
     }
 }

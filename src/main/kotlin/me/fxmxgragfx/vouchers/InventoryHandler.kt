@@ -1,35 +1,80 @@
-package me.fxmxgragfx.vouchers;
+package me.fxmxgragfx.vouchers
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
+import me.fxmxgragfx.vouchers.Verify.players
+import me.fxmxgragfx.vouchers.Verify.getVoucher
+import me.fxmxgragfx.vouchers.Verify.setupInventory
+import me.fxmxgragfx.vouchers.CC.translateS
+import me.fxmxgragfx.vouchers.CC.translate
+import me.fxmxgragfx.vouchers.Main.Companion.instance
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.entity.Player
+import me.fxmxgragfx.vouchers.Verify
+import org.bukkit.inventory.meta.ItemMeta
+import me.fxmxgragfx.vouchers.CC
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.ItemStack
+import java.util.ArrayList
 
-public class InventoryHandler implements Listener {
-
+class InventoryHandler : Listener {
     @EventHandler
-    public void onPlayerClick(InventoryClickEvent event) {
-        if(!(event.getWhoClicked() instanceof Player)) {
-            return;
+    fun onPlayerClick(event: InventoryClickEvent) {
+        if (event.whoClicked !is Player) {
+            return
         }
-        Player player = (Player) event.getWhoClicked();
-        if(VerifyClass.getPlayers().contains(player)) {
+        val player = event.whoClicked as Player
+        if (event.currentItem == null || event.slotType == null || event.currentItem.type == Material.AIR || event.currentItem.type == Material.STAINED_GLASS_PANE) {
+            return
+        }
+        event.isCancelled = true
+        val itemClicked = event.currentItem
+        if (players!!.contains(player)) {
+            players!!.remove(player)
+            val voucher = getVoucher(player)
+            player.openInventory(setupInventory(voucher))
+            val no = ItemStack(Material.REDSTONE_BLOCK)
+            val noMeta = no.itemMeta
+            noMeta.displayName = translateS("&cNO")
+            val loreNo: MutableList<String?> = ArrayList()
+            loreNo.add("&7- &cClick to decline")
+            noMeta.lore = translate(loreNo)
+            no.itemMeta = noMeta
+            val yes = ItemStack(Material.EMERALD_BLOCK)
+            val yesMeta = yes.itemMeta
+            yesMeta.displayName = translateS("&aYES")
+            val lore: MutableList<String?> = ArrayList()
+            lore.add("&7- &aClick to accept")
+            yesMeta.lore = translate(lore)
+            yes.itemMeta = yesMeta
+            if (itemClicked.isSimilar(yes)) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
+                if (instance!!.config.getBoolean("VOUCHERS.$voucher.COMMAND_LOG")) {
+                    Bukkit.getConsoleSender().sendMessage("Voucher redeemed by " + player.name + " : " + instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
+                }
+                player.itemInHand.amount = player.itemInHand.amount - 1
+                player.updateInventory()
+                player.sendMessage(translateS("&aVoucher succesfully redeemed!"))
+            }
+            if (itemClicked.isSimilar(no)) {
+                player.sendMessage(translateS("&cVoucher redemption canceled!"))
+            }
+            player.closeInventory()
         }
     }
 
     @EventHandler
-    public void onPlayerClose(InventoryCloseEvent event) {
-        if(!(event.getPlayer() instanceof Player)) {
-            return;
+    fun onPlayerClose(event: InventoryCloseEvent) {
+        if (event.player !is Player) {
+            return
         }
-        Player player = (Player) event.getPlayer();
-        if(VerifyClass.getPlayers().contains(player)) {
-            player.sendMessage(CC.translateS("&cVoucher redemption canceled!"));
-            VerifyClass.getPlayers().remove(player);
+        val player = event.player as Player
+        if (players!!.contains(player)) {
+            player.sendMessage(translateS("&cVoucher redemption canceled!"))
+            players!!.remove(player)
+            player.closeInventory()
         }
     }
-
-
 }

@@ -11,21 +11,26 @@ VOUCHERS:
     BOOK: true
     PERMISSION_TO_USE: 'vouchers.use.ranksilver'
     COMMAND: 'give rank %player% silver 30D'
+    COMMAND_LOG: true
     ITEM:
-      NAME: "&a6Silver"
+      NAME: '&6Silver'
       LORE:
         - 'Rigth Click to give'
 
   #Example2
   Gold_Rank:
-    NEED_CONFIRMATION: true
+    NEED_CONFIRMATION: false
     CONFIRMATION_GUI_NAME: "&aVoucher Verification"
     RIGHT_CLICK_AIR: true
     RIGHT_CLICK_BLOCK: true
+    LEFT_CLICK_AIR: true
+    LEFT_CLICK_BLOCK: true
     PAPER: true
     BOOK: true
-    PERMISSION_TO_USE: 'vouchers.use.ranks'
-    COMMAND: 'give rank %player% gold 60D'
-    NAME: "&eGold Rank"
-    LORE:
-      - 'Rigth Click to give'
+    PERMISSION_TO_USE: 'vouchers.use.ranksilver'
+    COMMAND: 'give rank %player% silver 30D'
+    COMMAND_LOG: false
+    ITEM:
+      NAME: '&eGold'
+      LORE:
+        - 'Rigth Click to give'

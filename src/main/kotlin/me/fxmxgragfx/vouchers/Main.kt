@@ -18,8 +18,9 @@ class Main : JavaPlugin() {
         getCommand("vouchers").executor = VCommand()
         getCommand("vouchers").permission = "vouchers.command"
         getCommand("vouchers").permissionMessage = translateS("You no have permissions to use this command!")
-        server.pluginManager.registerEvents(Handler(), this)
-        VerifyClass.setup()
+        server.pluginManager.registerEvents(InventoryHandler(), this)
+        server.pluginManager.registerEvents(VoucherHandler(), this)
+        Verify.setup()
     }
 
     override fun onDisable() {
