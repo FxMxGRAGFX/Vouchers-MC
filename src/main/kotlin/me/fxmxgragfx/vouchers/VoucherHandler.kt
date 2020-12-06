@@ -22,30 +22,50 @@ class VoucherHandler : Listener {
                 val rBlock = instance!!.config.getBoolean("VOUCHERS.$voucher.RIGHT_CLICK_BLOCK")
                 val lBlock = instance!!.config.getBoolean("VOUCHERS.$voucher.LEFT_CLICK_BLOCK")
                 if (rAir) {
+                    player.itemInHand.amount = player.itemInHand.amount - 1
+                    if(player.itemInHand.amount == 1) {
+                        player.inventory.remove(player.itemInHand)
+                    }
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                     if (instance!!.config.getBoolean("VOUCHERS.$voucher.COMMAND_LOG")) {
                         Bukkit.getConsoleSender().sendMessage("Voucher redeemed by " + player.name + " : " + instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                     }
+                    player.sendMessage(CC.translateS("&aVoucher succesfully redeemed!"))
                 } else if (lAir) {
                     if (action == Action.LEFT_CLICK_AIR) {
+                        player.itemInHand.amount = player.itemInHand.amount - 1
+                        if(player.itemInHand.amount == 1) {
+                            player.inventory.remove(player.itemInHand)
+                        }
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                         if (instance!!.config.getBoolean("VOUCHERS.$voucher.COMMAND_LOG")) {
                             Bukkit.getConsoleSender().sendMessage("Voucher redeemed by " + player.name + " : " + instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                         }
+                        player.sendMessage(CC.translateS("&aVoucher succesfully redeemed!"))
                     }
                 } else if (rBlock) {
                     if (action == Action.RIGHT_CLICK_BLOCK) {
+                        player.itemInHand.amount = player.itemInHand.amount - 1
+                        if(player.itemInHand.amount == 1) {
+                            player.inventory.remove(player.itemInHand)
+                        }
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                         if (instance!!.config.getBoolean("VOUCHERS.$voucher.COMMAND_LOG")) {
                             Bukkit.getConsoleSender().sendMessage("Voucher redeemed by " + player.name + " : " + instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                         }
+                        player.sendMessage(CC.translateS("&aVoucher succesfully redeemed!"))
                     }
                 } else if (lBlock) {
                     if (action == Action.LEFT_CLICK_BLOCK) {
+                        player.itemInHand.amount = player.itemInHand.amount - 1
+                        if(player.itemInHand.amount == 1) {
+                            player.inventory.remove(player.itemInHand)
+                        }
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                         if (instance!!.config.getBoolean("VOUCHERS.$voucher.COMMAND_LOG")) {
                             Bukkit.getConsoleSender().sendMessage("Voucher redeemed by " + player.name + " : " + instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                         }
+                        player.sendMessage(CC.translateS("&aVoucher succesfully redeemed!"))
                     }
                 } else {
                     throw Error("ERROR, BAD CONFIG.YML: <$voucher> Please report to: FxMxGRAGFX#0001 (Discord)")

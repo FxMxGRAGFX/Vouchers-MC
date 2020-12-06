@@ -26,12 +26,13 @@ class InventoryHandler : Listener {
             return
         }
         val player = event.whoClicked as Player
-        if (event.currentItem == null || event.slotType == null || event.currentItem.type == Material.AIR || event.currentItem.type == Material.STAINED_GLASS_PANE) {
-            return
-        }
-        event.isCancelled = true
         val itemClicked = event.currentItem
         if (players!!.contains(player)) {
+            if (event.currentItem == null || event.slotType == null || event.currentItem.type == Material.AIR || event.currentItem.type == Material.STAINED_GLASS_PANE) {
+                event.isCancelled = true
+                return
+            }
+            event.isCancelled = true
             players!!.remove(player)
             val voucher = getVoucher(player)
             player.openInventory(setupInventory(voucher))
@@ -55,11 +56,15 @@ class InventoryHandler : Listener {
                     Bukkit.getConsoleSender().sendMessage("Voucher redeemed by " + player.name + " : " + instance!!.config.getString("VOUCHERS.$voucher.COMMAND").replace("%player%".toRegex(), player.name))
                 }
                 player.itemInHand.amount = player.itemInHand.amount - 1
+                if(player.itemInHand.amount == 1) {
+                    player.inventory.remove(player.itemInHand)
+                }
                 player.updateInventory()
                 player.sendMessage(translateS("&aVoucher succesfully redeemed!"))
-            }
-            if (itemClicked.isSimilar(no)) {
+            } else if (itemClicked.isSimilar(no)) {
                 player.sendMessage(translateS("&cVoucher redemption canceled!"))
+            } else {
+                return;
             }
             player.closeInventory()
         }
