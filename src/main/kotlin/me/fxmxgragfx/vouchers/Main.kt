@@ -19,6 +19,7 @@ class Main : JavaPlugin() {
         getCommand("vouchers").permission = "vouchers.command"
         getCommand("vouchers").permissionMessage = translateS("You no have permissions to use this command!")
         server.pluginManager.registerEvents(Handler(), this)
+        VerifyClass.setup()
     }
 
     override fun onDisable() {
