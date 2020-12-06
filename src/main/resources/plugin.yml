@@ -1,0 +1,6 @@
+main: me.fxmxgragfx.vouchers.Main
+name: Vouchers
+version: 1.0-STABLE
+author: FxMxGRAGFX
+commands:
+  vouchers:
