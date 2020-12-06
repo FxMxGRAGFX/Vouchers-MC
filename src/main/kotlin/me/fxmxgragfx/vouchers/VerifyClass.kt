@@ -1,15 +1,24 @@
-package me.fxmxgragfx.vouchers;
+package me.fxmxgragfx.vouchers
 
-import org.bukkit.entity.Player;
+import me.fxmxgragfx.vouchers.CC.translateS
+import me.fxmxgragfx.vouchers.Main.Companion.instance
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.List;
+object VerifyClass {
+    @JvmStatic
+    var players: List<Player>? = null
+        private set
+    var inventory: Inventory? = null
+        private set
 
-public class VerifyClass {
+    fun setup() {
+        players = ArrayList()
+    }
 
-    private static List<Player> players;
-
-    public static void setup() {
-        players = new ArrayList<Player>();
+    fun setupInventory(name: String) {
+        inventory = Bukkit.createInventory(null, 27, translateS(instance!!.config.getString("VOUCHERS.$name.CONFIRMATION_GUI_NAME")))
     }
 }
